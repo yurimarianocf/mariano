@@ -1,0 +1,1358 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ICT Trader Desk — Plataforma Auxiliar</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f172a;
+      --panel2:#0b1222;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --line:#1f2937;
+      --accent:#22c55e;      /* verde */
+      --accent2:#38bdf8;     /* azul */
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius: 14px;
+      --radius2: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1200px 800px at 15% 0%, rgba(56,189,248,.08), transparent 50%),
+                  radial-gradient(900px 650px at 90% 10%, rgba(34,197,94,.07), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    a{color:inherit}
+    .app{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      min-height:100vh;
+    }
+    /* SIDEBAR */
+    .sidebar{
+      border-right:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(15,23,42,.85), rgba(11,18,34,.85));
+      padding:22px 18px;
+      position:sticky; top:0; height:100vh;
+      overflow:auto;
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+      padding:10px 10px 16px;
+      border-bottom:1px solid rgba(31,41,55,.8);
+      margin-bottom:14px;
+    }
+    .logo{
+      width:42px; height:42px; border-radius:12px;
+      background: conic-gradient(from 210deg, var(--accent2), rgba(56,189,248,.2), var(--accent));
+      box-shadow: 0 10px 26px rgba(56,189,248,.15);
+      position:relative;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:9px;
+      border-radius:10px;
+      background: rgba(11,15,23,.75);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .brand h1{
+      font-size:14px; margin:0; letter-spacing:.5px;
+      font-weight:700;
+    }
+    .brand p{margin:2px 0 0; font-size:12px; color:var(--muted)}
+    .nav{
+      display:flex; flex-direction:column; gap:6px;
+      margin-top:12px;
+    }
+    .nav button{
+      all:unset;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.06);
+      background: rgba(15,23,42,.35);
+      transition:.15s ease;
+    }
+    .nav button:hover{transform: translateY(-1px); background: rgba(15,23,42,.55)}
+    .nav button.active{
+      border-color: rgba(56,189,248,.35);
+      box-shadow: 0 0 0 3px rgba(56,189,248,.10);
+      background: rgba(56,189,248,.10);
+    }
+    .nav .left{
+      display:flex; gap:10px; align-items:center;
+      font-size:13px;
+    }
+    .pill{
+      font-size:11px; color:var(--muted);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:999px;
+      padding:2px 8px;
+      font-family:var(--mono);
+    }
+    .sidebar .foot{
+      margin-top:18px;
+      padding:12px 10px;
+      border-top:1px solid rgba(31,41,55,.8);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+    .kbd{
+      font-family:var(--mono);
+      padding:2px 6px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      color: #cbd5e1;
+    }
+
+    /* MAIN */
+    .main{
+      padding:26px 26px 40px;
+      overflow:hidden;
+    }
+    .topbar{
+      display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .title h2{margin:0; font-size:18px; letter-spacing:.2px}
+    .title p{margin:6px 0 0; color:var(--muted); font-size:13px; max-width:880px}
+    .right-tools{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .chip{
+      display:flex; align-items:center; gap:8px;
+      padding:9px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(15,23,42,.35);
+      color:#cbd5e1;
+      font-size:12px;
+      font-family:var(--mono);
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(15,23,42,.45);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:.15s ease;
+      font-size:12px;
+      display:flex; gap:8px; align-items:center;
+    }
+    .btn:hover{transform: translateY(-1px)}
+    .btn.primary{
+      border-color: rgba(34,197,94,.25);
+      background: rgba(34,197,94,.12);
+      box-shadow: 0 0 0 3px rgba(34,197,94,.08);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+      align-items:start;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(15,23,42,.78), rgba(11,18,34,.78));
+      border:1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      padding:14px 14px 12px;
+      overflow:hidden;
+      position:relative;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-60px -60px auto auto;
+      width:220px; height:220px;
+      background: radial-gradient(circle at 30% 30%, rgba(56,189,248,.18), transparent 55%);
+      transform: rotate(15deg);
+      pointer-events:none;
+    }
+    .card h3{
+      margin:0 0 8px;
+      font-size:13px;
+      letter-spacing:.25px;
+      display:flex; gap:10px; align-items:center;
+    }
+    .sub{color:var(--muted); font-size:12px; margin:0 0 10px}
+    .kv{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .box{
+      background: rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding:10px 10px;
+    }
+    .box .label{font-size:11px; color:var(--muted); margin-bottom:6px}
+    .box .value{
+      font-family:var(--mono);
+      font-size:12px;
+      color:#dbeafe;
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
+      line-height:1.35;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .tag{
+      font-size:11px;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      color:#cbd5e1;
+    }
+    .tag.good{border-color: rgba(34,197,94,.25); background: rgba(34,197,94,.10)}
+    .tag.warn{border-color: rgba(245,158,11,.25); background: rgba(245,158,11,.10)}
+    .tag.bad {border-color: rgba(239,68,68,.25); background: rgba(239,68,68,.10)}
+
+    .span-12{grid-column: span 12;}
+    .span-8{grid-column: span 8;}
+    .span-6{grid-column: span 6;}
+    .span-4{grid-column: span 4;}
+    .span-3{grid-column: span 3;}
+
+    .row{
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    input, select, textarea{
+      width:100%;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      padding:10px 10px;
+      color:var(--text);
+      outline:none;
+      font-size:12px;
+    }
+    textarea{min-height:110px; resize:vertical; font-family:var(--sans); line-height:1.35}
+    .mini{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:8px;
+      line-height:1.4;
+    }
+    .hr{
+      height:1px; background: rgba(31,41,55,.8);
+      margin:10px 0;
+    }
+    .list{
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .item{
+      display:flex; align-items:flex-start; gap:10px;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.18);
+    }
+    .item input[type="checkbox"]{width:16px; height:16px; margin-top:2px}
+    .item .t{
+      flex:1;
+      font-size:12px;
+      line-height:1.35;
+    }
+    .item .t b{font-weight:700}
+    .item .meta{
+      font-family:var(--mono);
+      color:var(--muted);
+      font-size:11px;
+      white-space:nowrap;
+    }
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .footer-note{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+      padding:12px 14px;
+      border:1px dashed rgba(255,255,255,.12);
+      border-radius:16px;
+      background: rgba(0,0,0,.18);
+    }
+
+    /* responsive */
+    @media (max-width: 1040px){
+      .app{grid-template-columns: 1fr}
+      .sidebar{position:relative; height:auto}
+      .grid{gap:12px}
+      .span-8,.span-6,.span-4,.span-3{grid-column: span 12;}
+      .two{grid-template-columns: 1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>ICT Trader Desk</h1>
+          <p>Bias • Liquidity • PD Arrays • Execução</p>
+        </div>
+      </div>
+
+      <div class="nav" id="nav">
+        <button class="active" data-view="dashboard">
+          <div class="left">📌 Dashboard</div>
+          <span class="pill">D</span>
+        </button>
+        <button data-view="plan">
+          <div class="left">🧭 Plano do Dia</div>
+          <span class="pill">P</span>
+        </button>
+        <button data-view="liquidity">
+          <div class="left">💧 Liquidez & Draw</div>
+          <span class="pill">L</span>
+        </button>
+        <button data-view="pdarrays">
+          <div class="left">🧱 PD Arrays</div>
+          <span class="pill">A</span>
+        </button>
+        <button data-view="killzones">
+          <div class="left">⏱ Killzones</div>
+          <span class="pill">K</span>
+        </button>
+        <button data-view="risk">
+          <div class="left">🛡 Gestão de Risco</div>
+          <span class="pill">R</span>
+        </button>
+        <button data-view="journal">
+          <div class="left">📝 Journal</div>
+          <span class="pill">J</span>
+        </button>
+        <button data-view="settings">
+          <div class="left">⚙️ Config</div>
+          <span class="pill">S</span>
+        </button>
+      </div>
+
+      <div class="foot">
+        <div style="margin-bottom:8px;">
+          Atalhos: <span class="kbd">Alt</span>+<span class="kbd">1</span>…<span class="kbd">8</span> • Salva no <span class="kbd">LocalStorage</span>.
+        </div>
+        <div>
+          Dica: use a plataforma como “cockpit”: <b>HTF bias → liquidez → PD array → timing (killzone) → execução → journal</b>.
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h2 id="viewTitle">Dashboard</h2>
+          <p id="viewDesc">Visão geral: Bias, tarefas do dia, killzones e último registro.</p>
+        </div>
+        <div class="right-tools">
+          <div class="chip" id="clock">SP: --:--:--</div>
+          <button class="btn primary" id="saveBtn">💾 Salvar</button>
+          <button class="btn" id="resetBtn">🧹 Reset (local)</button>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <section class="grid view" id="view-dashboard">
+        <div class="card span-4">
+          <h3>📈 Bias (HTF → LTF)</h3>
+          <p class="sub">Seu “norte”: Weekly/Daily → Swing → Intraday.</p>
+          <div class="kv">
+            <div class="box">
+              <div class="label">Direção (hoje)</div>
+              <div class="value"><span id="dashBiasDir">—</span><span class="tag" id="dashBiasTag">—</span></div>
+            </div>
+            <div class="box">
+              <div class="label">Draw (alvo de liquidez)</div>
+              <div class="value"><span id="dashDraw">—</span><span class="tag warn">DOI</span></div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="mini">Checklist rápido: estrutura (BOS/MSS), premium/discount, PD array alinhado com o draw.</div>
+        </div>
+
+        <div class="card span-4">
+          <h3>⏱ Timing (Killzones)</h3>
+          <p class="sub">Horários em <b>America/São_Paulo</b> (ajustável).</p>
+          <div class="list" id="dashKZ"></div>
+          <div class="mini">Sugestão: foque 1–2 janelas por dia e evite overtrading fora do plano.</div>
+        </div>
+
+        <div class="card span-4">
+          <h3>✅ Tarefas do Dia</h3>
+          <p class="sub">Pré-mercado → Execução → Pós-mercado.</p>
+          <div class="list" id="dashTasks"></div>
+          <div class="mini">Consistência vem de processo. Resultados são consequência.</div>
+        </div>
+
+        <div class="card span-8">
+          <h3>🧭 Plano do Dia (resumo)</h3>
+          <p class="sub">Anote o cenário e os gatilhos (o que precisa acontecer para você agir).</p>
+          <div class="two">
+            <div class="box">
+              <div class="label">Cenário (HTF → sessão)</div>
+              <div class="value" style="white-space:normal; align-items:flex-start" id="dashScenario">—</div>
+            </div>
+            <div class="box">
+              <div class="label">Gatilhos (setup signature)</div>
+              <div class="value" style="white-space:normal; align-items:flex-start" id="dashTriggers">—</div>
+            </div>
+          </div>
+          <div class="footer-note">
+            <b>Regra de ouro:</b> “Não é sobre prever, é sobre <u>mapear</u> e <u>reagir</u> quando o mercado entrega a assinatura do setup.”
+          </div>
+        </div>
+
+        <div class="card span-4">
+          <h3>📝 Último Journal</h3>
+          <p class="sub">Última entrada salva.</p>
+          <div class="box">
+            <div class="label">Resumo</div>
+            <div class="value" style="white-space:normal; align-items:flex-start" id="dashJournal">—</div>
+          </div>
+          <div class="mini">Faça print do antes/depois e registre: contexto, PD array, liquidez, execução e emoção.</div>
+        </div>
+      </section>
+
+      <!-- PLANO DO DIA -->
+      <section class="grid view" id="view-plan" style="display:none">
+        <div class="card span-6">
+          <h3>🧭 Bias Builder</h3>
+          <p class="sub">Defina o bias a partir de HTF, estrutura e “draw on liquidity”.</p>
+          <div class="two">
+            <div>
+              <label class="mini">Instrumento</label>
+              <input id="sym" placeholder="Ex.: ES, NQ, EURUSD, BTCUSD..." />
+            </div>
+            <div>
+              <label class="mini">Direção (Hoje)</label>
+              <select id="biasDir">
+                <option value="">—</option>
+                <option value="Bullish">Bullish</option>
+                <option value="Bearish">Bearish</option>
+                <option value="Neutral/Wait">Neutral/Wait</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="two" style="margin-top:10px;">
+            <div>
+              <label class="mini">HTF contexto (W/D)</label>
+              <select id="htfContext">
+                <option value="">—</option>
+                <option value="Premium (sell-side idea)">Premium (sell-side idea)</option>
+                <option value="Discount (buy-side idea)">Discount (buy-side idea)</option>
+                <option value="In range / Equilibrium">In range / Equilibrium</option>
+              </select>
+            </div>
+            <div>
+              <label class="mini">Estrutura (intra)</label>
+              <select id="structure">
+                <option value="">—</option>
+                <option value="BOS (continuação)">BOS (continuação)</option>
+                <option value="MSS (mudança de estrutura)">MSS (mudança de estrutura)</option>
+                <option value="Range / consolidação">Range / consolidação</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label class="mini">Draw on Liquidity (o “ímã” do preço)</label>
+            <input id="draw" placeholder="Ex.: Buy-side liquidity acima do daily high; Sell-side abaixo do ASIA low; FVG HTF..." />
+          </div>
+
+          <div class="hr"></div>
+
+          <label class="mini">Cenário (texto curto e objetivo)</label>
+          <textarea id="scenario" placeholder="Ex.: HTF bearish em premium, objetivo é varrer buy-side acima do range e entregar para sell-side (linha d’água). Procurar MSS + FVG/OB em killzone NY."></textarea>
+
+          <div class="mini">
+            Dica: escreva como “if/then”. Ex.: <b>Se</b> varrer liquidez X e der MSS, <b>então</b> procuro entrada no PD array Y com alvo Z.
+          </div>
+        </div>
+
+        <div class="card span-6">
+          <h3>🎯 Gatilhos (assinatura do setup)</h3>
+          <p class="sub">O que precisa acontecer para virar trade (sem adivinhação).</p>
+
+          <div class="two">
+            <div>
+              <label class="mini">PD Array de Entrada</label>
+              <select id="entryArray">
+                <option value="">—</option>
+                <option value="FVG (Fair Value Gap)">FVG (Fair Value Gap)</option>
+                <option value="OB (Order Block)">OB (Order Block)</option>
+                <option value="Breaker">Breaker</option>
+                <option value="Mitigation Block">Mitigation Block</option>
+                <option value="OTE (Optimal Trade Entry)">OTE (Optimal Trade Entry)</option>
+                <option value="Liquidity Sweep + MSS">Liquidity Sweep + MSS</option>
+              </select>
+            </div>
+            <div>
+              <label class="mini">Tempo (janela)</label>
+              <select id="timeWindow">
+                <option value="">—</option>
+                <option value="Asia">Asia</option>
+                <option value="London">London</option>
+                <option value="NY AM">NY AM</option>
+                <option value="NY PM">NY PM</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label class="mini">Regras de Validação</label>
+            <textarea id="validation" placeholder="- Sweep de liquidez (igual highs/lows)
+- MSS/BOS confirmado
+- Entrada no FVG/OB em premium/discount correto
+- Alvo = pool de liquidez / imbalance fill
+- Stop acima/abaixo do swing + invalidação"></textarea>
+          </div>
+
+          <div class="two" style="margin-top:10px;">
+            <div>
+              <label class="mini">Alvo primário</label>
+              <input id="tp1" placeholder="Ex.: SSL abaixo do low / BSL acima do high / fill de FVG" />
+            </div>
+            <div>
+              <label class="mini">Invalidação</label>
+              <input id="invalid" placeholder="Ex.: fechar acima do OB; romper swing X; MSS falhar..." />
+            </div>
+          </div>
+
+          <div class="footer-note">
+            <b>Evite “forçar”:</b> se o mercado não entrega sua assinatura, sua ação é <b>não operar</b>.
+          </div>
+        </div>
+      </section>
+
+      <!-- LIQUIDEZ -->
+      <section class="grid view" id="view-liquidity" style="display:none">
+        <div class="card span-6">
+          <h3>💧 Liquidity Map</h3>
+          <p class="sub">Marque pools e níveis que importam (stops, equal highs/lows, highs/lows importantes).</p>
+
+          <div class="two">
+            <div>
+              <label class="mini">Buy-side Liquidity (BSL)</label>
+              <textarea id="bsl" placeholder="Ex.: Equal highs H1 acima do range; Daily high; Weekly high..."></textarea>
+            </div>
+            <div>
+              <label class="mini">Sell-side Liquidity (SSL)</label>
+              <textarea id="ssl" placeholder="Ex.: Equal lows M15; Asia low; Daily low; old swing low..."></textarea>
+            </div>
+          </div>
+
+          <div class="two" style="margin-top:10px;">
+            <div>
+              <label class="mini">Níveis “must-watch”</label>
+              <textarea id="levels" placeholder="- Open (00:00)
+- Asia High/Low
+- London High/Low
+- Previous Day High/Low
+- Weekly High/Low
+- 50% do range"></textarea>
+            </div>
+            <div>
+              <label class="mini">Narrativa do Draw</label>
+              <textarea id="liqNarrative" placeholder="Para onde o preço está sendo atraído e por quê? (stops / imbalance / range delivery)"></textarea>
+            </div>
+          </div>
+
+          <div class="mini">
+            Regra prática: <b>preço costuma buscar liquidez</b> (stops) e <b>corrigir ineficiências</b> (imbalances), então mapeie isso antes de olhar LTF.
+          </div>
+        </div>
+
+        <div class="card span-6">
+          <h3>🧲 Premium / Discount</h3>
+          <p class="sub">Use o range relevante (day/leg) para decidir “caro/barato”.</p>
+
+          <div class="two">
+            <div>
+              <label class="mini">Range High</label>
+              <input id="rangeHigh" type="number" step="0.01" placeholder="Ex.: 5042.25" />
+            </div>
+            <div>
+              <label class="mini">Range Low</label>
+              <input id="rangeLow" type="number" step="0.01" placeholder="Ex.: 4988.00" />
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label class="mini">Preço atual (aprox.)</label>
+            <input id="pxNow" type="number" step="0.01" placeholder="Ex.: 5018.50" />
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="kv">
+            <div class="box">
+              <div class="label">Equilibrium (50%)</div>
+              <div class="value"><span id="eqOut">—</span><span class="tag" id="pdTag">—</span></div>
+            </div>
+            <div class="box">
+              <div class="label">Leitura</div>
+              <div class="value" style="white-space:normal; align-items:flex-start" id="pdRead">—</div>
+            </div>
+          </div>
+
+          <div class="mini">
+            Ideia: <b>sell model</b> tende a preferir entradas em <b>premium</b> e mirar <b>discount/SSL</b>. <b>Buy model</b> é o inverso.
+          </div>
+        </div>
+      </section>
+
+      <!-- PD ARRAYS -->
+      <section class="grid view" id="view-pdarrays" style="display:none">
+        <div class="card span-4">
+          <h3>🧱 PD Arrays (biblioteca)</h3>
+          <p class="sub">Selecione o que você quer mapear hoje.</p>
+
+          <div class="list" id="pdChecklist"></div>
+
+          <div class="mini">Ex.: varredura de liquidez → MSS → entrada em FVG/OB → alvo em pool (BSL/SSL) ou fill.</div>
+        </div>
+
+        <div class="card span-8">
+          <h3>🗺 Mapa de PD Arrays do Dia</h3>
+          <p class="sub">Cole níveis e observações (ex.: FVG H1 5012–5016 / OB M15 5020–5024).</p>
+
+          <div class="two">
+            <div>
+              <label class="mini">Bullish PD arrays (preferência buy)</label>
+              <textarea id="pdBull" placeholder="- Bullish OB: ...
+- Bullish FVG: ...
+- Mitigation: ..."></textarea>
+            </div>
+            <div>
+              <label class="mini">Bearish PD arrays (preferência sell)</label>
+              <textarea id="pdBear" placeholder="- Bearish OB: ...
+- Bearish FVG: ...
+- Breaker: ..."></textarea>
+            </div>
+          </div>
+
+          <div class="two" style="margin-top:10px;">
+            <div>
+              <label class="mini">“Confluências”</label>
+              <textarea id="pdConfluence" placeholder="- Alinhado com draw
+- Em premium/discount
+- Próximo a HTF swing
+- Dentro de killzone
+- Com MSS/BOS"></textarea>
+            </div>
+            <div>
+              <label class="mini">Plano de Execução</label>
+              <textarea id="execPlan" placeholder="Entrada: ...
+Stop: ...
+TP1: ...
+TP2: ...
+Gestão: BE em X, parcial em Y..."></textarea>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            <b>Objetivo:</b> transformar o gráfico em um mapa. Você não “caça trades”, você executa quando o preço chega no seu ponto.
+          </div>
+        </div>
+      </section>
+
+      <!-- KILLZONES -->
+      <section class="grid view" id="view-killzones" style="display:none">
+        <div class="card span-6">
+          <h3>⏱ Killzones (horário local)</h3>
+          <p class="sub">Padrão em SP (ajuste nas Config). Exibe “agora” e o status.</p>
+          <div class="list" id="kzList"></div>
+          <div class="mini">
+            Sugestão prática: escolha 1 killzone principal e 1 secundária. Fora delas: apenas observação e mapa.
+          </div>
+        </div>
+
+        <div class="card span-6">
+          <h3>🧠 Check de Disciplina</h3>
+          <p class="sub">Use como trava de overtrade.</p>
+          <div class="list" id="discipline"></div>
+          <div class="footer-note">
+            Se você marcou 2 ou mais itens de “risco alto”, a decisão padrão é <b>não operar</b>.
+          </div>
+        </div>
+      </section>
+
+      <!-- RISCO -->
+      <section class="grid view" id="view-risk" style="display:none">
+        <div class="card span-6">
+          <h3>🛡 Calculadora de Risco</h3>
+          <p class="sub">Tamanho de posição baseado em risco fixo.</p>
+
+          <div class="two">
+            <div>
+              <label class="mini">Capital (R$)</label>
+              <input id="acct" type="number" step="0.01" placeholder="Ex.: 25000" />
+            </div>
+            <div>
+              <label class="mini">Risco (%)</label>
+              <input id="riskPct" type="number" step="0.01" placeholder="Ex.: 0.5" />
+            </div>
+          </div>
+
+          <div class="two" style="margin-top:10px;">
+            <div>
+              <label class="mini">Stop (pontos/pips/ticks)</label>
+              <input id="stopPts" type="number" step="0.01" placeholder="Ex.: 12.5" />
+            </div>
+            <div>
+              <label class="mini">Valor por ponto (R$)</label>
+              <input id="valPerPt" type="number" step="0.01" placeholder="Ex.: 5.00" />
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="kv">
+            <div class="box">
+              <div class="label">Risco em R$</div>
+              <div class="value"><span id="riskBRL">—</span><span class="tag warn">fixo</span></div>
+            </div>
+            <div class="box">
+              <div class="label">Tamanho sugerido</div>
+              <div class="value"><span id="posSize">—</span><span class="tag good">units</span></div>
+            </div>
+          </div>
+
+          <div class="mini">
+            Ajuste o “valor por ponto” conforme seu mercado (futuros, forex, cripto, ações). O objetivo é padronizar.
+          </div>
+        </div>
+
+        <div class="card span-6">
+          <h3>📏 Regras de Risco (padrão)</h3>
+          <p class="sub">Coloque suas regras e use como “contrato” diário.</p>
+          <textarea id="riskRules" placeholder="- Máx 2 trades/dia
+- Máx -1R no dia (para)
+- Só operar em killzone
+- Sem trade se sem bias/HTF claro
+- Sem revenge trade
+- Parcial em 1R, BE após..."></textarea>
+          <div class="mini">Disciplina > setup. O setup só funciona se a execução e o risco forem consistentes.</div>
+        </div>
+      </section>
+
+      <!-- JOURNAL -->
+      <section class="grid view" id="view-journal" style="display:none">
+        <div class="card span-8">
+          <h3>📝 Journal (entrada rápida)</h3>
+          <p class="sub">Registre em linguagem “processo”: contexto → assinatura → execução → resultado → lição.</p>
+
+          <div class="two">
+            <div>
+              <label class="mini">Data</label>
+              <input id="jDate" type="date" />
+            </div>
+            <div>
+              <label class="mini">Resultado (R)</label>
+              <input id="jR" type="number" step="0.01" placeholder="Ex.: +1.5 / -1.0" />
+            </div>
+          </div>
+
+          <div class="two" style="margin-top:10px;">
+            <div>
+              <label class="mini">Setup</label>
+              <input id="jSetup" placeholder="Ex.: Sweep + MSS + FVG (NY AM)" />
+            </div>
+            <div>
+              <label class="mini">Emoção/estado</label>
+              <input id="jMood" placeholder="Ex.: calmo / ansioso / apressado..." />
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label class="mini">Notas</label>
+            <textarea id="jNotes" placeholder="O que o mercado fez? Qual era o draw? Onde entrou? Stop? Gestão? O que faria melhor?"></textarea>
+          </div>
+
+          <div class="two" style="margin-top:10px;">
+            <div>
+              <label class="mini">Link de print (opcional)</label>
+              <input id="jLink" placeholder="Cole link do TradingView/Drive/Imgur..." />
+            </div>
+            <div>
+              <label class="mini">Tag</label>
+              <select id="jTag">
+                <option value="">—</option>
+                <option value="A+ (perfeito)">A+ (perfeito)</option>
+                <option value="A (bom)">A (bom)</option>
+                <option value="B (ok)">B (ok)</option>
+                <option value="C (forçado)">C (forçado)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card span-4">
+          <h3>📚 Histórico (últimos 10)</h3>
+          <p class="sub">Clique para carregar.</p>
+          <div class="list" id="jHistory"></div>
+          <div class="mini">Se seu “C (forçado)” aparece muito, o problema é processo, não o mercado.</div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="grid view" id="view-settings" style="display:none">
+        <div class="card span-6">
+          <h3>⚙️ Configurações</h3>
+          <p class="sub">Ajuste killzones e preferências.</p>
+
+          <div class="two">
+            <div>
+              <label class="mini">Timezone (somente display)</label>
+              <input id="tzLabel" value="America/Sao_Paulo" disabled />
+            </div>
+            <div>
+              <label class="mini">Sessões (SP) — formato HH:MM-HH:MM</label>
+              <input id="kzCustom" placeholder="Asia 21:00-01:00; London 03:00-06:00; NYAM 09:30-12:00; NYPM 13:30-15:30" />
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <label class="mini">Checklist padrão (tarefas do dia)</label>
+          <textarea id="tasksCustom" placeholder="- Marcar PDH/PDL
+- Marcar Asia High/Low
+- Mapear BSL/SSL
+- Definir draw
+- Listar PD arrays
+- Definir risco
+- Operar só em killzone
+- Journal pós trade"></textarea>
+
+          <div class="mini">Você pode personalizar tudo e salvar. O reset apaga apenas os dados locais deste navegador.</div>
+        </div>
+
+        <div class="card span-6">
+          <h3>📌 Widget TradingView (opcional)</h3>
+          <p class="sub">Se quiser, cole aqui o HTML do widget do TradingView (sem promessas de compatibilidade em todo browser).</p>
+          <textarea id="tvEmbed" placeholder="Cole o código de incorporação do TradingView aqui..."></textarea>
+          <div class="hr"></div>
+          <div class="box">
+            <div class="label">Preview</div>
+            <div id="tvPreview" class="value" style="white-space:normal; align-items:flex-start; min-height:100px; color:var(--muted)">
+              Cole o embed e salve para ver aqui.
+            </div>
+          </div>
+        </div>
+
+        <div class="card span-12">
+          <h3>🧾 Observação</h3>
+          <p class="sub">Esta ferramenta é educacional/organizacional. Não é recomendação financeira.</p>
+          <div class="footer-note">
+            O método fica forte quando você mantém o ciclo: <b>mapa → timing → assinatura → execução → journal → revisão</b>.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ============== STATE (LocalStorage) ==============
+    const LS_KEY = "ict_trader_desk_v1";
+    const $ = (id)=>document.getElementById(id);
+
+    const defaultState = {
+      sym:"",
+      biasDir:"",
+      htfContext:"",
+      structure:"",
+      draw:"",
+      scenario:"",
+      entryArray:"",
+      timeWindow:"",
+      validation:"",
+      tp1:"",
+      invalid:"",
+      bsl:"",
+      ssl:"",
+      levels:"",
+      liqNarrative:"",
+      rangeHigh:"",
+      rangeLow:"",
+      pxNow:"",
+      pdBull:"",
+      pdBear:"",
+      pdConfluence:"",
+      execPlan:"",
+      acct:"",
+      riskPct:"",
+      stopPts:"",
+      valPerPt:"",
+      riskRules:"- Máx 2 trades/dia\n- Máx -1R no dia (para)\n- Só operar em killzone\n- Sem trade se sem bias/HTF claro\n- Sem revenge trade",
+      jDate:"",
+      jR:"",
+      jSetup:"",
+      jMood:"",
+      jNotes:"",
+      jLink:"",
+      jTag:"",
+      journalHistory:[],
+      kzCustom:"Asia 21:00-01:00; London 03:00-06:00; NYAM 09:30-12:00; NYPM 13:30-15:30",
+      tasksCustom:"- Marcar PDH/PDL\n- Marcar Asia High/Low\n- Mapear BSL/SSL\n- Definir draw\n- Listar PD arrays\n- Definir risco\n- Operar só em killzone\n- Journal pós trade",
+      tvEmbed:""
+    };
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(!raw) return structuredClone(defaultState);
+        const parsed = JSON.parse(raw);
+        return {...structuredClone(defaultState), ...parsed};
+      }catch(e){
+        console.warn("Falha ao carregar state:", e);
+        return structuredClone(defaultState);
+      }
+    }
+    function saveState(state){
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+    }
+    let state = loadState();
+
+    // ============== NAV / VIEWS ==============
+    const views = ["dashboard","plan","liquidity","pdarrays","killzones","risk","journal","settings"];
+    const titles = {
+      dashboard:["Dashboard","Visão geral: Bias, tarefas do dia, killzones e último registro."],
+      plan:["Plano do Dia","Bias (HTF→LTF) + cenário + gatilhos. Seu mapa para operar sem adivinhação."],
+      liquidity:["Liquidez & Draw","Mapeie pools, níveis e o “ímã” do preço. Depois procure a assinatura no LTF."],
+      pdarrays:["PD Arrays","Organize OB/FVG/Breaker/Mitigation e as confluências do dia."],
+      killzones:["Killzones","Timing e disciplina. Operar dentro de janelas reduz ruído e impulsividade."],
+      risk:["Gestão de Risco","Padronize risco, tamanho e regras. A consistência nasce aqui."],
+      journal:["Journal","Registre contexto, assinatura e execução. Revisão gera evolução."],
+      settings:["Config","Personalize killzones, checklist e embed do TradingView."]
+    };
+
+    function setView(v){
+      for(const id of views){
+        $("view-"+id).style.display = (id===v) ? "" : "none";
+      }
+      $("viewTitle").textContent = titles[v][0];
+      $("viewDesc").textContent  = titles[v][1];
+      document.querySelectorAll("#nav button").forEach(b=>{
+        b.classList.toggle("active", b.dataset.view===v);
+      });
+    }
+
+    document.querySelectorAll("#nav button").forEach((b,idx)=>{
+      b.addEventListener("click", ()=> setView(b.dataset.view));
+    });
+
+    // keyboard: Alt+1..8
+    window.addEventListener("keydown",(e)=>{
+      if(!e.altKey) return;
+      const n = parseInt(e.key,10);
+      if(Number.isFinite(n) && n>=1 && n<=8){
+        setView(views[n-1]);
+      }
+    });
+
+    // ============== HELPERS ==============
+    function fmtMoney(v){
+      if(!Number.isFinite(v)) return "—";
+      return v.toLocaleString("pt-BR", {style:"currency", currency:"BRL"});
+    }
+    function fmtNum(v){
+      if(!Number.isFinite(v)) return "—";
+      return v.toLocaleString("pt-BR", {maximumFractionDigits: 2});
+    }
+
+    // Parse killzones string: "Asia 21:00-01:00; London 03:00-06:00; ..."
+    function parseKZ(str){
+      const out=[];
+      (str||"").split(";").map(s=>s.trim()).filter(Boolean).forEach(part=>{
+        const m = part.match(/^(.+?)\s+(\d{2}:\d{2})-(\d{2}:\d{2})$/);
+        if(m){
+          out.push({name:m[1].trim(), start:m[2], end:m[3]});
+        }
+      });
+      return out.length?out:[
+        {name:"Asia", start:"21:00", end:"01:00"},
+        {name:"London", start:"03:00", end:"06:00"},
+        {name:"NY AM", start:"09:30", end:"12:00"},
+        {name:"NY PM", start:"13:30", end:"15:30"}
+      ];
+    }
+
+    function inWindow(now, startHHMM, endHHMM){
+      // returns boolean and handles overnight windows
+      const [sh,sm]=startHHMM.split(":").map(Number);
+      const [eh,em]=endHHMM.split(":").map(Number);
+      const start = new Date(now); start.setHours(sh,sm,0,0);
+      const end   = new Date(now); end.setHours(eh,em,0,0);
+      if(end < start){ // overnight
+        const end2 = new Date(end); end2.setDate(end2.getDate()+1);
+        return (now>=start) || (now<=end);
+      }
+      return now>=start && now<=end;
+    }
+
+    function getStatusTag(isNow){
+      if(isNow) return {text:"AGORA", cls:"good"};
+      return {text:"OFF", cls:"warn"};
+    }
+
+    // ============== BIND INPUTS ==============
+    const binds = [
+      "sym","biasDir","htfContext","structure","draw","scenario",
+      "entryArray","timeWindow","validation","tp1","invalid",
+      "bsl","ssl","levels","liqNarrative","rangeHigh","rangeLow","pxNow",
+      "pdBull","pdBear","pdConfluence","execPlan",
+      "acct","riskPct","stopPts","valPerPt","riskRules",
+      "jDate","jR","jSetup","jMood","jNotes","jLink","jTag",
+      "kzCustom","tasksCustom","tvEmbed"
+    ];
+
+    function pullFromUI(){
+      binds.forEach(id=>{
+        if($(id)) state[id] = $(id).value;
+      });
+    }
+    function pushToUI(){
+      binds.forEach(id=>{
+        if($(id)) $(id).value = state[id] ?? "";
+      });
+    }
+
+    // ============== DASH / RENDER ==============
+    function renderPremiumDiscount(){
+      const hi = Number(state.rangeHigh);
+      const lo = Number(state.rangeLow);
+      const px = Number(state.pxNow);
+      if(!Number.isFinite(hi) || !Number.isFinite(lo) || hi===lo){
+        $("eqOut").textContent = "—";
+        $("pdTag").textContent = "—";
+        $("pdTag").className = "tag";
+        $("pdRead").textContent = "Preencha Range High/Low e Preço atual.";
+        return;
+      }
+      const eq = (hi+lo)/2;
+      $("eqOut").textContent = fmtNum(eq);
+      let read="Equilibrium definido. ";
+      let tag = {text:"EQ", cls:"warn"};
+      if(Number.isFinite(px)){
+        if(px>eq){ read += "Preço acima do 50% → região de PREMIUM."; tag={text:"Premium", cls:"warn"}; }
+        else if(px<eq){ read += "Preço abaixo do 50% → região de DISCOUNT."; tag={text:"Discount", cls:"good"}; }
+        else { read += "Preço em torno do 50% (EQ)."; tag={text:"EQ", cls:"warn"}; }
+      }else{
+        read += "Digite o preço atual para leitura premium/discount.";
+      }
+      $("pdTag").textContent = tag.text;
+      $("pdTag").className = "tag "+tag.cls;
+      $("pdRead").textContent = read + " Use isso para filtrar entradas conforme seu bias.";
+    }
+
+    function renderRisk(){
+      const acct = Number(state.acct);
+      const pct  = Number(state.riskPct);
+      const stop = Number(state.stopPts);
+      const vpp  = Number(state.valPerPt);
+
+      const riskBRL = (Number.isFinite(acct)&&Number.isFinite(pct)) ? acct*(pct/100) : NaN;
+      $("riskBRL").textContent = Number.isFinite(riskBRL)? fmtMoney(riskBRL) : "—";
+
+      // units = risk / (stop * valuePerPoint)
+      const denom = stop * vpp;
+      const units = (Number.isFinite(riskBRL)&&Number.isFinite(denom)&&denom>0) ? (riskBRL/denom) : NaN;
+      $("posSize").textContent = Number.isFinite(units)? fmtNum(units) : "—";
+    }
+
+    function renderTasks(){
+      const tasks = (state.tasksCustom||"")
+        .split("\n").map(s=>s.trim()).filter(Boolean);
+      // keep completion states in-memory (simple) via localStorage key
+      const doneKey = LS_KEY+"_tasks_done";
+      const done = new Set(JSON.parse(localStorage.getItem(doneKey) || "[]"));
+      function toggle(t){
+        if(done.has(t)) done.delete(t); else done.add(t);
+        localStorage.setItem(doneKey, JSON.stringify([...done]));
+        renderTasks();
+      }
+
+      const el = $("dashTasks");
+      el.innerHTML = "";
+      tasks.slice(0,6).forEach((t,i)=>{
+        const row = document.createElement("div");
+        row.className = "item";
+        const cb = document.createElement("input"); cb.type="checkbox"; cb.checked = done.has(t);
+        cb.addEventListener("change", ()=> toggle(t));
+        const txt = document.createElement("div");
+        txt.className="t";
+        txt.innerHTML = `<b>${i+1}.</b> ${t}`;
+        row.appendChild(cb); row.appendChild(txt);
+        el.appendChild(row);
+      });
+    }
+
+    function renderKillzones(containerId){
+      const kz = parseKZ(state.kzCustom);
+      const now = new Date(); // browser local time (user)
+      const el = $(containerId);
+      el.innerHTML = "";
+      kz.forEach(k=>{
+        const isNow = inWindow(now, k.start, k.end);
+        const tag = getStatusTag(isNow);
+        const row = document.createElement("div");
+        row.className = "item";
+        row.innerHTML = `
+          <div class="t"><b>${k.name}</b><div class="mini" style="margin:4px 0 0">${k.start} → ${k.end}</div></div>
+          <div class="meta"><span class="tag ${tag.cls}">${tag.text}</span></div>
+        `;
+        el.appendChild(row);
+      });
+    }
+
+    function renderDiscipline(){
+      const checks = [
+        ["Operando fora da killzone", "Timing"],
+        ["Sem draw definido (liquidez/imbalance)", "Contexto"],
+        ["Sem MSS/BOS / estrutura confusa", "Estrutura"],
+        ["Risco acima do plano", "Risco"],
+        ["Depois de loss (vontade de recuperar)", "Psicológico"],
+        ["3+ trades hoje (overtrade)", "Processo"]
+      ];
+      const key = LS_KEY+"_discipline";
+      const flags = new Set(JSON.parse(localStorage.getItem(key)||"[]"));
+      const el = $("discipline");
+      el.innerHTML="";
+      checks.forEach(([t,cat])=>{
+        const row = document.createElement("div");
+        row.className="item";
+        const cb = document.createElement("input"); cb.type="checkbox"; cb.checked = flags.has(t);
+        cb.addEventListener("change", ()=>{
+          if(flags.has(t)) flags.delete(t); else flags.add(t);
+          localStorage.setItem(key, JSON.stringify([...flags]));
+          renderDiscipline();
+        });
+        const txt = document.createElement("div");
+        txt.className="t";
+        txt.innerHTML = `<b>${t}</b><div class="mini" style="margin:4px 0 0">Categoria: ${cat}</div>`;
+        row.appendChild(cb); row.appendChild(txt);
+        el.appendChild(row);
+      });
+    }
+
+    function renderPDChecklist(){
+      const items = [
+        "Order Block (OB)",
+        "Fair Value Gap (FVG)",
+        "Liquidity Sweep (equal highs/lows)",
+        "Breaker / Failed OB",
+        "Mitigation Block",
+        "OTE (62%-79%)",
+        "Imbalance / Void fill",
+        "Equilibrium / 50% range"
+      ];
+      const key = LS_KEY+"_pd_checks";
+      const checks = new Set(JSON.parse(localStorage.getItem(key)||"[]"));
+      const el = $("pdChecklist");
+      el.innerHTML="";
+      items.forEach((t)=>{
+        const row = document.createElement("div");
+        row.className="item";
+        const cb = document.createElement("input"); cb.type="checkbox"; cb.checked = checks.has(t);
+        cb.addEventListener("change", ()=>{
+          if(checks.has(t)) checks.delete(t); else checks.add(t);
+          localStorage.setItem(key, JSON.stringify([...checks]));
+          renderPDChecklist();
+        });
+        const txt = document.createElement("div");
+        txt.className="t";
+        txt.innerHTML = `<b>${t}</b>`;
+        row.appendChild(cb); row.appendChild(txt);
+        el.appendChild(row);
+      });
+    }
+
+    function renderJournalHistory(){
+      const el = $("jHistory");
+      el.innerHTML="";
+      const hist = (state.journalHistory||[]).slice(0,10);
+      if(!hist.length){
+        el.innerHTML = `<div class="mini">Sem entradas ainda.</div>`;
+        return;
+      }
+      hist.forEach((j,idx)=>{
+        const row = document.createElement("div");
+        row.className="item";
+        const tagClass = j.tag?.startsWith("A+") ? "good" : j.tag?.startsWith("C") ? "bad" : "warn";
+        row.innerHTML = `
+          <div class="t">
+            <b>${j.date || "—"}</b> • ${j.setup || "—"}
+            <div class="mini" style="margin:4px 0 0">${(j.notes||"").slice(0,90)}${(j.notes||"").length>90?"…":""}</div>
+          </div>
+          <div class="meta">
+            <div>${j.r ?? "—"}R</div>
+            <div style="margin-top:6px"><span class="tag ${tagClass}">${j.tag || "—"}</span></div>
+          </div>
+        `;
+        row.addEventListener("click", ()=>{
+          // load into form
+          state.jDate = j.date||"";
+          state.jR = j.r??"";
+          state.jSetup = j.setup||"";
+          state.jMood = j.mood||"";
+          state.jNotes = j.notes||"";
+          state.jLink = j.link||"";
+          state.jTag = j.tag||"";
+          pushToUI();
+          setView("journal");
+        });
+        el.appendChild(row);
+      });
+    }
+
+    function renderTVPreview(){
+      const container = $("tvPreview");
+      const code = (state.tvEmbed||"").trim();
+      if(!code){
+        container.textContent = "Cole o embed e salve para ver aqui.";
+        return;
+      }
+      // basic sanitization: allow only iframe/script from TradingView is user responsibility
+      container.innerHTML = code;
+    }
+
+    function renderDashboard(){
+      // Bias
+      $("dashBiasDir").textContent = state.biasDir || "—";
+      const tagEl = $("dashBiasTag");
+      if(state.biasDir==="Bullish"){ tagEl.textContent="BUY"; tagEl.className="tag good"; }
+      else if(state.biasDir==="Bearish"){ tagEl.textContent="SELL"; tagEl.className="tag bad"; }
+      else if(state.biasDir){ tagEl.textContent="WAIT"; tagEl.className="tag warn"; }
+      else { tagEl.textContent="—"; tagEl.className="tag"; }
+
+      $("dashDraw").textContent = (state.draw||"—").slice(0,44) + ((state.draw||"").length>44?"…":"");
+
+      $("dashScenario").textContent = state.scenario || "—";
+      const trig = [
+        state.entryArray ? `Entrada: ${state.entryArray}` : "",
+        state.timeWindow ? `Janela: ${state.timeWindow}` : "",
+        state.tp1 ? `Alvo: ${state.tp1}` : ""
+      ].filter(Boolean).join(" • ");
+      $("dashTriggers").textContent = trig || "—";
+
+      const lastJ = (state.journalHistory||[])[0];
+      $("dashJournal").textContent = lastJ
+        ? `${lastJ.date||"—"} • ${lastJ.setup||"—"} • ${lastJ.r??"—"}R\n${(lastJ.notes||"").slice(0,120)}${(lastJ.notes||"").length>120?"…":""}`
+        : "—";
+
+      renderKillzones("dashKZ");
+      renderTasks();
+    }
+
+    // ============== CLOCK (SP display) ==============
+    function tickClock(){
+      try{
+        const now = new Date();
+        // Display using Intl timezone formatting in America/Sao_Paulo
+        const fmt = new Intl.DateTimeFormat("pt-BR", {
+          timeZone:"America/Sao_Paulo",
+          hour:"2-digit", minute:"2-digit", second:"2-digit"
+        });
+        $("clock").textContent = "SP: " + fmt.format(now);
+      }catch(e){
+        $("clock").textContent = "SP: --:--:--";
+      }
+    }
+
+    // ============== SAVE / RESET ==============
+    $("saveBtn").addEventListener("click", ()=>{
+      pullFromUI();
+
+      // journal append (if date/setup/notes present)
+      const hasJournal = (state.jDate||state.jSetup||state.jNotes||"").trim().length>0;
+      if(hasJournal){
+        const entry = {
+          date: state.jDate || "",
+          r: state.jR || "",
+          setup: state.jSetup || "",
+          mood: state.jMood || "",
+          notes: state.jNotes || "",
+          link: state.jLink || "",
+          tag: state.jTag || ""
+        };
+        // Prevent duplicate immediate append: compare last
+        const last = (state.journalHistory||[])[0];
+        const same = last && JSON.stringify(last)===JSON.stringify(entry);
+        if(!same){
+          state.journalHistory = [entry, ...(state.journalHistory||[])].slice(0,50);
+        }
+      }
+
+      saveState(state);
+      renderAll();
+      // little feedback
+      $("saveBtn").textContent = "✅ Salvo";
+      setTimeout(()=> $("saveBtn").textContent="💾 Salvar", 900);
+    });
+
+    $("resetBtn").addEventListener("click", ()=>{
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem(LS_KEY+"_tasks_done");
+      localStorage.removeItem(LS_KEY+"_discipline");
+      localStorage.removeItem(LS_KEY+"_pd_checks");
+      state = structuredClone(defaultState);
+      pushToUI();
+      renderAll();
+    });
+
+    // ============== LIVE UPDATES ==============
+    ["rangeHigh","rangeLow","pxNow","acct","riskPct","stopPts","valPerPt","kzCustom","tasksCustom","tvEmbed",
+     "biasDir","draw","scenario","entryArray","timeWindow","tp1"
+    ].forEach(id=>{
+      const el = $(id);
+      if(el){
+        el.addEventListener("input", ()=>{
+          pullFromUI();
+          renderAll();
+        });
+      }
+    });
+
+    function renderAll(){
+      renderPremiumDiscount();
+      renderRisk();
+      renderPDChecklist();
+      renderKillzones("kzList");
+      renderDiscipline();
+      renderJournalHistory();
+      renderTVPreview();
+      renderDashboard();
+    }
+
+    // init
+    pushToUI();
+    setView("dashboard");
+    renderAll();
+    tickClock();
+    setInterval(tickClock, 1000);
+  </script>
+</body>
+</html>
